@@ -27,6 +27,10 @@ public class ProductServiceImpl implements ProductService{
             throw new IllegalArgumentException("Product with this name already exists");
         }
 
+        if (productDTO.getLocation().getX()==0 && productDTO.getLocation().getY() == 0){
+            throw new IllegalArgumentException("Location can't be {0:0}");
+        }
+
         Product product = productMapper.toEntity(productDTO);
         Product savedProduct = productRepository.save(product);
         return productMapper.toDTO(savedProduct);

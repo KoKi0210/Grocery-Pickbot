@@ -5,10 +5,10 @@ import com.example.groceryPickbot.exceptions.ProductNotFoundException;
 import com.example.groceryPickbot.order.dto.*;
 import com.example.groceryPickbot.order.mapper.OrderMapper;
 import com.example.groceryPickbot.order.model.*;
-import com.example.groceryPickbot.order.repository.OrderItemRepository;
 import com.example.groceryPickbot.order.repository.OrderRepository;
 import com.example.groceryPickbot.product.model.Product;
 import com.example.groceryPickbot.product.repository.ProductRepository;
+import com.example.groceryPickbot.route.services.RouteServiceImpl;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -20,20 +20,19 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService{
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
+    private final RouteServiceImpl routeService;
     private final OrderMapper orderMapper;
 
     public OrderServiceImpl(OrderRepository orderRepository,
-                            OrderItemRepository orderItemRepository,
                             ProductRepository productRepository,
+                            RouteServiceImpl routeService,
                             OrderMapper orderMapper) {
         this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
         this.productRepository = productRepository;
+        this.routeService = routeService;
         this.orderMapper = orderMapper;
     }
-
 
     @Override
     @Transactional
@@ -47,6 +46,7 @@ public class OrderServiceImpl implements OrderService{
         Order order = createOrderEntity(orderRequestDTO);
         Order savedOrder = orderRepository.save(order);
 
+        routeService.calculateAndSavePath(savedOrder);
         updateProductStock(orderRequestDTO.getItems());
 
         return OrderResponseDTO.success(savedOrder.getId(), "Order ready! Please collect it at the desk");

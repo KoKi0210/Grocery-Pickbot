@@ -7,7 +7,8 @@ import com.example.groceryPickbot.product.model.Product;
 import com.example.groceryPickbot.route.model.Route;
 import com.example.groceryPickbot.route.model.RouteResponse;
 import com.example.groceryPickbot.route.repository.RouteRepository;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,10 +32,13 @@ public class RouteServiceImpl implements RouteService{
             throw new OrderNotFoundException(id);
         }
 
-        int[][] coordinates = new Gson().fromJson(
-                route.get().getCoordinatesJson(),
-                int[][].class
-        );
+        ObjectMapper mapper = new ObjectMapper();
+        int[][] coordinates = null;
+        try {
+            coordinates = mapper.readValue(route.get().getCoordinatesJson(), int[][].class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         return new RouteResponse(
                 id,
@@ -49,33 +53,37 @@ public class RouteServiceImpl implements RouteService{
                 .collect(Collectors.toList());
 
         List<int[]> fullPath = calculateOptimalRoute(products);
-        String pathJson = new Gson().toJson(fullPath);
+        ObjectMapper mapper = new ObjectMapper();
+        String json;
+        try {
+             json = mapper.writeValueAsString(fullPath);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         Route route = new Route();
         route.setOrder(order);
-        route.setCoordinatesJson(pathJson);
+        route.setCoordinatesJson(json);
         routeRepository.save(route);
     }
 
     private static List<int[]> calculateOptimalRoute(List<Product> products) {
         List<int[]> route = new ArrayList<>();
         int[] current = {0, 0};
-        route.add(current.clone());
+        route.add(current.clone()); // добавяме [0, 0]
 
         List<int[]> productLocations = products.stream()
                 .map(p -> new int[]{p.getLocation().getX(), p.getLocation().getY()})
-                .distinct()
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()); // взимаме локациите на продуктите
 
         while (!productLocations.isEmpty()) {
-            int[] nearest = findNearest(current, productLocations);
-            route.addAll(generateRouteBetween(current, nearest));
-            productLocations.remove(nearest);
-            current = nearest;
+            int[] nearest = findNearest(current, productLocations); // Намираме най-близката следваща лоакция на продукт
+            route.addAll(generateRouteBetween(current, nearest)); // Добавяме пътя от сегашната локация до следващата най-близка
+            productLocations.remove(nearest); // Премахваме най-близката локация от списъка
+            current = nearest; // Задаваме най-близката локация да е сегашната
         }
 
-        // Връщане в началото
-        route.addAll(generateRouteBetween(current, new int[]{0, 0}));
+        route.addAll(generateRouteBetween(current, new int[]{0, 0})); // След като сме на последната локация се връщаме на [0, 0]
 
         return route;
 
@@ -83,7 +91,7 @@ public class RouteServiceImpl implements RouteService{
 
     private static List<int[]> generateRouteBetween(int[] start, int[] end) {
         List<int[]> segment = new ArrayList<>();
-        int[] current = start.clone();
+        int[] current = start.clone(); // Запазваме локацията, в която сме в момента
 
         while (!Arrays.equals(current, end)) {
             // Движение по X ос
@@ -94,7 +102,7 @@ public class RouteServiceImpl implements RouteService{
             else {
                 current[1] += (end[1] > current[1]) ? 1 : -1;
             }
-            segment.add(current.clone());
+            segment.add(current.clone()); // добавяме стъпка
         }
 
         return segment;
@@ -105,13 +113,11 @@ public class RouteServiceImpl implements RouteService{
         int[] nearest = null;
 
         for (int[] loc : locations) {
-            double distance = Math.sqrt(
-                    Math.pow(loc[0] - current[0], 2) +
-                            Math.pow(loc[1] - current[1], 2)
-            );
+            double distance = Math.abs(loc[0] - current[0]) + Math.abs(loc[1] - current[1]); // изчислява разтоянието
+
             if (distance < minDistance) {
                 minDistance = distance;
-                nearest = loc;
+                nearest = loc; // Задаваме най-близката локация
             }
         }
 

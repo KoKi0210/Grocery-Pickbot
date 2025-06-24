@@ -37,10 +37,10 @@ public interface OrderMapper {
     default BigDecimal calculateTotal(Order order) {
         return order.getOrderItems().stream()
                 .map(this::calculateItemTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add); //започва от 0 и добавя всекя цена за продуктите
     }
 
     default BigDecimal calculateItemTotal(OrderItem item) {
-        return BigDecimal.valueOf(item.getProduct().getPrice() * item.getQuantity());
+        return BigDecimal.valueOf(item.getProduct().getPrice() * item.getQuantity()); // пресмята цена
     }
 }

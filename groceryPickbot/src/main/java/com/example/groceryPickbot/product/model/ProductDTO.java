@@ -4,6 +4,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 public class ProductDTO {
+
+    private Long id;
+
     @NotBlank(message = "Product name is required")
     @Size(min = 3, max = 100, message = "The name must be between 2 and 100 characters")
     private String name;
@@ -50,5 +53,13 @@ public class ProductDTO {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

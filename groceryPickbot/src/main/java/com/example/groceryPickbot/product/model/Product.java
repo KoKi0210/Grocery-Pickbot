@@ -2,6 +2,8 @@ package com.example.groceryPickbot.product.model;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "products")
 public class Product {
@@ -14,7 +16,7 @@ public class Product {
     private String name;
 
     @Column(name = "price", nullable = false)
-    private double price;
+    private BigDecimal price;
 
     @Column(name = "quantity", nullable = false)
     private int quantity;
@@ -38,11 +40,11 @@ public class Product {
         this.name = name;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

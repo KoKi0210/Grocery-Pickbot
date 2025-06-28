@@ -2,7 +2,7 @@ package com.example.groceryPickbot.product.services;
 
 import com.example.groceryPickbot.product.model.Product;
 import com.example.groceryPickbot.product.model.ProductDTO;
-import com.example.groceryPickbot.product.model.ProductMapper;
+import com.example.groceryPickbot.product.mapper.ProductMapper;
 import com.example.groceryPickbot.product.repository.ProductRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;

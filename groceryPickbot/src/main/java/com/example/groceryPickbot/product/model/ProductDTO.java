@@ -3,6 +3,8 @@ package com.example.groceryPickbot.product.model;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
+import java.math.BigDecimal;
+
 public class ProductDTO {
 
     private Long id;
@@ -13,7 +15,7 @@ public class ProductDTO {
 
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.01", message = "Price must be at least 0.01")
-    private Double price;
+    private BigDecimal price;
 
     @NotNull(message = "Quantity is required")
     @Min(value = 1, message = "Quantity can't be negative")
@@ -31,11 +33,11 @@ public class ProductDTO {
         this.name = name;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

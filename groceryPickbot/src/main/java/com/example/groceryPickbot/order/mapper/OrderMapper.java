@@ -41,6 +41,6 @@ public interface OrderMapper {
     }
 
     default BigDecimal calculateItemTotal(OrderItem item) {
-        return BigDecimal.valueOf(item.getProduct().getPrice() * item.getQuantity()); // пресмята цена
+        return item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())) ; // пресмята цена
     }
 }

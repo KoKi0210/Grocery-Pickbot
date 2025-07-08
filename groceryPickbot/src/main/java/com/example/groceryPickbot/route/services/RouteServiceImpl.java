@@ -33,7 +33,7 @@ public class RouteServiceImpl implements RouteService{
         }
 
         ObjectMapper mapper = new ObjectMapper();
-        int[][] coordinates = null;
+        int[][] coordinates;
         try {
             coordinates = mapper.readValue(route.get().getCoordinatesJson(), int[][].class);
         } catch (JsonProcessingException e) {

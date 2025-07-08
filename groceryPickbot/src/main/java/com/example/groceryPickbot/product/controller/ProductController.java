@@ -1,6 +1,7 @@
 package com.example.groceryPickbot.product.controller;
 
 import com.example.groceryPickbot.product.model.ProductDTO;
+import com.example.groceryPickbot.product.services.ProductService;
 import com.example.groceryPickbot.product.services.ProductServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import java.util.List;
 @Validated
 public class ProductController {
 
-    private final ProductServiceImpl productService;
+    private final ProductService productService;
 
     public ProductController(ProductServiceImpl productService) {
         this.productService = productService;

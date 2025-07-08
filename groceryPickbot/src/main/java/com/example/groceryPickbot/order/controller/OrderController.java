@@ -3,6 +3,7 @@ package com.example.groceryPickbot.order.controller;
 import com.example.groceryPickbot.order.dto.OrderDTO;
 import com.example.groceryPickbot.order.dto.OrderRequestDTO;
 import com.example.groceryPickbot.order.dto.OrderResponseDTO;
+import com.example.groceryPickbot.order.services.OrderService;
 import com.example.groceryPickbot.order.services.OrderServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class OrderController {
 
-    private final OrderServiceImpl orderService;
+    private final OrderService orderService;
 
     public OrderController(OrderServiceImpl orderService) {
         this.orderService = orderService;

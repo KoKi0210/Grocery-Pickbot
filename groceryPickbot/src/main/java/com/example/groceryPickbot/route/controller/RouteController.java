@@ -2,6 +2,7 @@ package com.example.groceryPickbot.route.controller;
 
 
 import com.example.groceryPickbot.route.model.RouteResponse;
+import com.example.groceryPickbot.route.services.RouteService;
 import com.example.groceryPickbot.route.services.RouteServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:5500")
 @RequestMapping("/routes")
 public class RouteController {
-    private RouteServiceImpl routeService;
+    private RouteService routeService;
 
     public RouteController(RouteServiceImpl routeService) {
         this.routeService = routeService;

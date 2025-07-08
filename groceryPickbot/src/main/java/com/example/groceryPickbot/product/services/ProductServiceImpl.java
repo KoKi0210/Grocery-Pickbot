@@ -23,11 +23,11 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public ProductDTO createProduct(@Valid ProductDTO productDTO){
-        if (productRepository.existsByName(productDTO.getName())) {
+        if (productRepository.existsByName(productDTO.name())) {
             throw new IllegalArgumentException("Product with this name already exists");
         }
 
-        if (productDTO.getLocation().getX()==0 && productDTO.getLocation().getY() == 0){
+        if (productDTO.location().getX()==0 && productDTO.location().getY() == 0){
             throw new IllegalArgumentException("Location can't be {0:0}");
         }
 

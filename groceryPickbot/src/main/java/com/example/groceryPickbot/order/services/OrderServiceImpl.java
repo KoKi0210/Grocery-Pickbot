@@ -38,7 +38,7 @@ public class OrderServiceImpl implements OrderService{
     @Transactional
     public OrderResponseDTO createOrder(OrderRequestDTO orderRequestDTO) {
 
-        List<MissingItemDTO> missingItems = checkStockAvailability(orderRequestDTO.getItems());
+        List<MissingItemDTO> missingItems = checkStockAvailability(orderRequestDTO.items());
         if (!missingItems.isEmpty()){
             return OrderResponseDTO.failed("Insufficient availability", missingItems);
         }
@@ -47,7 +47,7 @@ public class OrderServiceImpl implements OrderService{
         Order savedOrder = orderRepository.save(order);
 
         routeService.calculateAndSavePath(savedOrder);
-        updateProductStock(orderRequestDTO.getItems());
+        updateProductStock(orderRequestDTO.items());
 
         return OrderResponseDTO.success(savedOrder.getId(), "Order ready! Please collect it at the desk");
     }
@@ -71,12 +71,12 @@ public class OrderServiceImpl implements OrderService{
     private Order createOrderEntity(OrderRequestDTO orderRequest) {
         Order order = orderMapper.toOrderEntity(orderRequest);
 
-        orderRequest.getItems().forEach(item -> {
-            Product product = getProduct(item.getProductId());
+        orderRequest.items().forEach(item -> {
+            Product product = getProduct(item.productId());
             OrderItem orderItem = orderMapper.toOrderItemEntity(item);
             orderItem.setProduct(product);
             orderItem.setOrder(order);
-            orderItem.setQuantity(item.getQuantity());
+            orderItem.setQuantity(item.quantity());
             order.getOrderItems().add(orderItem);
         });
 
@@ -92,19 +92,19 @@ public class OrderServiceImpl implements OrderService{
 
     private void updateProductStock(List<OrderItemRequestDTO> items){
         items.forEach(item -> {
-            Product product = getProduct(item.getProductId());
-            product.setQuantity(product.getQuantity() - item.getQuantity());
+            Product product = getProduct(item.productId());
+            product.setQuantity(product.getQuantity() - item.quantity());
         });
     }
 
     private List<MissingItemDTO> checkStockAvailability(List<OrderItemRequestDTO> items){
         return items.stream()
                 .map(item -> {
-                    Product product = getProduct(item.getProductId());
-                    if (product.getQuantity() < item.getQuantity()) {
+                    Product product = getProduct(item.productId());
+                    if (product.getQuantity() < item.quantity()) {
                         return new MissingItemDTO(
                                 product.getName(),
-                                item.getQuantity(),
+                                item.quantity(),
                                 product.getQuantity()
                         );
                     }

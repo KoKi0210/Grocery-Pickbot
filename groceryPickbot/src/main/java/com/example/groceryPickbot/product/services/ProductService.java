@@ -1,6 +1,6 @@
 package com.example.groceryPickbot.product.services;
 
-import com.example.groceryPickbot.product.model.ProductDTO;
+import com.example.groceryPickbot.product.models.ProductDTO;
 
 import java.util.List;
 

@@ -1,8 +1,8 @@
 package com.example.groceryPickbot.order.services;
 
-import com.example.groceryPickbot.order.dto.OrderDTO;
-import com.example.groceryPickbot.order.dto.OrderRequestDTO;
-import com.example.groceryPickbot.order.dto.OrderResponseDTO;
+import com.example.groceryPickbot.order.dtos.OrderDTO;
+import com.example.groceryPickbot.order.dtos.OrderRequestDTO;
+import com.example.groceryPickbot.order.dtos.OrderResponseDTO;
 
 import java.util.List;
 

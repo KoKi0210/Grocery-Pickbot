@@ -1,12 +1,12 @@
 package com.example.groceryPickbot.route.services;
 
 import com.example.groceryPickbot.exceptions.OrderNotFoundException;
-import com.example.groceryPickbot.order.model.Order;
-import com.example.groceryPickbot.order.model.OrderItem;
-import com.example.groceryPickbot.product.model.Product;
-import com.example.groceryPickbot.route.model.Route;
-import com.example.groceryPickbot.route.model.RouteResponse;
-import com.example.groceryPickbot.route.repository.RouteRepository;
+import com.example.groceryPickbot.order.models.Order;
+import com.example.groceryPickbot.order.models.OrderItem;
+import com.example.groceryPickbot.product.models.Product;
+import com.example.groceryPickbot.route.models.Route;
+import com.example.groceryPickbot.route.models.RouteResponse;
+import com.example.groceryPickbot.route.repositories.RouteRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;

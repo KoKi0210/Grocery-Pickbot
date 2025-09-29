@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Grocery Store</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Grocery Pickbot Store</h1>
+    <div class="button-group">
+        <button onclick="showProductManagement()">🛠 Product management</button>
+        <button onclick="showOrderPage()">🛒 Make order</button>
+    </div>
+
+    <div id="content-area">
+        <div id="track-section" style="display: none; margin-top: 20px;">
+            <button onclick="trackBot()">🚗 Show bot route</button>
+            <div id="bot-path" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/welcome.js"></script>
+</body>
+</html>

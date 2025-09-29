@@ -3,7 +3,6 @@ package com.example.groceryPickbot.security;
 import com.example.groceryPickbot.exceptions.SecurityConfigurationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -48,28 +47,18 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws SecurityConfigurationException {
-        try {
-            httpSecurity
-                    .csrf(AbstractHttpConfigurer::disable)
-                    .cors(AbstractHttpConfigurer::disable)
-                    .exceptionHandling(exceptionHandling ->
-                            exceptionHandling.authenticationEntryPoint(unauthorizedHandler)
-                    )
-                    .sessionManagement(sessionManagement ->
-                            sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    )
-                    .authorizeHttpRequests(authorizeRequests ->
-                            authorizeRequests
-                                    .requestMatchers("/api/auth/**").permitAll()
-                                    .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
-                                    .requestMatchers("/products/**").authenticated()
-                                    .anyRequest().authenticated()
-                    );
-            httpSecurity.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-            return httpSecurity.build();
-        }catch (Exception e) {
-            throw new SecurityConfigurationException("Error in security configuration",e);
-        }
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/","/index.html", "/login.html", "/registration.html","/api/auth/**", "/css/**", "/js/**","/h2-console/**").permitAll()
+                        .anyRequest().authenticated()
+                );
+
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 }

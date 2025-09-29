@@ -56,7 +56,7 @@ function showCreateForm() {
         })
         .then(response => {
             if (response.ok) return response.json();
-            else throw new Error("Error creating the product.");
+            return response.text().then(errorMsg => { throw new Error(errorMsg); });
         })
         .then(data => {
             document.getElementById('create-result').innerHTML = `<p style="color:green;">Successfully created product!</p>`;
@@ -186,8 +186,6 @@ function showProductList() {
         });
 }
 
-
-
 function loadOrderSection() {
   fetch('/products')
     .then(res => res.json())
@@ -230,7 +228,6 @@ function loadOrderSection() {
       listDiv.innerHTML = html;
     });
 }
-
 
 function submitOrder() {
   fetch('/products')

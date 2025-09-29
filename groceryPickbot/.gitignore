@@ -12,6 +12,7 @@
 *.iws
 *.iml
 *.ipr
+.idea/copilot.data.migration.agent.xml
 
 ### NetBeans ###
 /nbproject/private/

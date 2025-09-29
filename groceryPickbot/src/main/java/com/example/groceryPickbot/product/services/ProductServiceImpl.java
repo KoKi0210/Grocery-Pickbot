@@ -27,6 +27,10 @@ public class ProductServiceImpl implements ProductService{
             throw new IllegalArgumentException("Product with this name already exists");
         }
 
+        if (productRepository.findByLocation(productDTO.location()).isPresent()){
+            throw new IllegalArgumentException("Location is already occupied by another product");
+        }
+
         if (productDTO.location().getX()==0 && productDTO.location().getY() == 0){
             throw new IllegalArgumentException("Location can't be {0:0}");
         }

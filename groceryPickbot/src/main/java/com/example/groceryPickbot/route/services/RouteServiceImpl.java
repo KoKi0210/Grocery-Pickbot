@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class RouteServiceImpl implements RouteService{
-    private RouteRepository routeRepository;
+    private final RouteRepository routeRepository;
 
     public RouteServiceImpl(RouteRepository routeRepository) {
         this.routeRepository = routeRepository;

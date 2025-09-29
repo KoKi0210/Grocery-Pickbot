@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:5500")
 @RequestMapping("/routes")
 public class RouteController {
-    private RouteService routeService;
+    private final RouteService routeService;
 
     public RouteController(RouteServiceImpl routeService) {
         this.routeService = routeService;

@@ -17,7 +17,7 @@ public record ProductDTO(
         BigDecimal price,
 
         @NotNull(message = "Quantity is required")
-        @Min(value = 1, message = "Quantity can't be negative")
+        @Min(value = 1, message = "Quantity can't be negative or zero")
         Integer quantity,
 
         @Valid

@@ -27,4 +27,5 @@ public class UserDb {
   @Column(unique = true)
   private String username;
   private String password;
+  private Role role;
 }

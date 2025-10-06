@@ -1,5 +1,6 @@
 package com.example.grocerypickbot.security;
 
+import com.example.grocerypickbot.user.models.Role;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -37,13 +38,14 @@ public class JwtUtils {
    * @param username the username for which the token is generated
    * @return a signed JWT token as a String
    */
-  public String generateToken(String username) {
+  public String generateToken(String username, String role) {
     return Jwts.builder()
-            .subject(username)
-            .issuedAt(new Date())
-            .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
-            .signWith(key) // The key itself implies the algorithm (HS256 in this case)
-            .compact();
+        .subject(username)
+        .claim("role", role)
+        .issuedAt(new Date())
+        .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
+        .signWith(key) // The key itself implies the algorithm (HS256 in this case)
+        .compact();
   }
 
   /**
@@ -54,11 +56,26 @@ public class JwtUtils {
    */
   public String getUsernameFromToken(String token) {
     return Jwts.parser()
-            .verifyWith(key)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload()
-            .getSubject();
+        .verifyWith(key)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload()
+        .getSubject();
+  }
+
+  /**
+   * Extracts the role from the given JWT token.
+   *
+   * @param token the JWT token
+   * @return the role contained in the token
+   */
+  public String getRoleFromToken(String token) {
+    return Jwts.parser()
+        .verifyWith(key)
+        .build()
+        .parseSignedClaims(token)
+        .getPayload()
+        .get("role", String.class);
   }
 
   /**

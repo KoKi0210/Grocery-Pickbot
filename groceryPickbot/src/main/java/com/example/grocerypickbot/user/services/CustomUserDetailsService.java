@@ -43,7 +43,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     boolean credentialsNonExpired = true;
     boolean accountNonLocked = true;
     List<GrantedAuthority> authorities = Collections.singletonList(
-            new SimpleGrantedAuthority("ROLE_USER"));
+            new SimpleGrantedAuthority("ROLE_" + user.getRole().name().toUpperCase()));
 
     return new User(user.getUsername(),
             user.getPassword(),

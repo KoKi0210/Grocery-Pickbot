@@ -9,11 +9,12 @@ import com.example.grocerypickbot.order.models.OrderItem;
 import java.math.BigDecimal;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 
 /**
  * Mapper interface for converting between Order entities and DTOs.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface OrderMapper {
 
   /**

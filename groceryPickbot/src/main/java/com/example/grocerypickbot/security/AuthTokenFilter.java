@@ -6,7 +6,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,12 +18,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
 /**
- Servlet filter for authenticating requests using JWT tokens.
-
- Extracts JWT tokens from cookies or headers, validates them, and sets the
- authentication in the Spring Security context if valid. Integrates with
- {@link JwtUtils} for token operations and {@link UserDetailsService} for loading user details.
-
+ * Servlet filter for authenticating requests using JWT tokens.
+ *
+ * <p>Extracts JWT tokens from cookies or headers, validates them, and sets the
+ * authentication in the Spring Security context if valid. Integrates with
+ * {@link JwtUtils} for token operations and {@link UserDetailsService} for loading user details.
  */
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -37,13 +38,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
   /**
    * Constructor for AuthTokenFilter.
    *
-   * @param jwtUtils used to handle JWT operations.
-   *
+   * @param jwtUtils           used to handle JWT operations.
    * @param userDetailsService used to load user-specific data.
    */
   public AuthTokenFilter(
-          JwtUtils jwtUtils,
-          UserDetailsService userDetailsService) {
+      JwtUtils jwtUtils,
+      UserDetailsService userDetailsService) {
     this.jwtUtils = jwtUtils;
     this.userDetailsService = userDetailsService;
   }
@@ -52,17 +52,19 @@ public class AuthTokenFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request,
                                   HttpServletResponse response,
                                   FilterChain filterChain)
-          throws ServletException, IOException {
+      throws ServletException, IOException {
     try {
       String jwt = extractJwtToken(request);
       if (jwtUtils.validateJwtToken(jwt)) {
         String username = jwtUtils.getUsernameFromToken(jwt);
-
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        String userRole = jwtUtils.getRoleFromToken(jwt);
+        SimpleGrantedAuthority
+            authority =
+            new SimpleGrantedAuthority("ROLE_" + userRole.toUpperCase());
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-
+            new UsernamePasswordAuthenticationToken(
+                userDetails, null, Collections.singletonList(authority));
         SecurityContextHolder.getContext().setAuthentication(authentication);
       }
     } catch (Exception e) {

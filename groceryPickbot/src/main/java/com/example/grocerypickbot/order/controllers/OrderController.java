@@ -5,6 +5,8 @@ import com.example.grocerypickbot.order.dtos.OrderRequestDto;
 import com.example.grocerypickbot.order.dtos.OrderResponseDto;
 import com.example.grocerypickbot.order.services.OrderService;
 import com.example.grocerypickbot.order.services.OrderServiceImpl;
+import com.example.grocerypickbot.security.annotation.RoleAccess;
+import com.example.grocerypickbot.user.models.Role;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "http://localhost:5500")
 @RequestMapping("/orders")
 @Validated
+@RoleAccess(allowedRoles = {Role.ADMIN, Role.USER})
 public class OrderController {
 
   private final OrderService orderService;

@@ -8,6 +8,14 @@
 <h1>Registration Form</h1>
 <form id="registrationForm">
     <div id="formMessage" style="color: red;"></div>
+
+    <div>
+        <label>User Type</label>
+        <select id="roleSelector" name="role">
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
+        </select>
+    </div>
     <div>
         <label>Username</label>
         <label>
@@ -28,6 +36,14 @@
             <input type="password" name="matchingPassword"/>
         </label>
         <div class="error" id="matchingPasswordError" style="color: red;"></div>
+    </div>
+
+    <div id="adminCodeField" style="display: none;">
+        <label>Admin Code</label>
+        <label>
+            <input type="password" name="adminCode"/>
+        </label>
+        <div class="error" id="adminCodeError" style="color: red;"></div>
     </div>
     <button type="submit">Register</button>
 </form>

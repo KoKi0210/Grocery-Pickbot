@@ -1,4 +1,15 @@
 function registrationHandler() {
+    const roleSelector = document.getElementById('roleSelector');
+    const adminCodeField = document.getElementById('adminCodeField');
+
+    roleSelector.addEventListener('change', function() {
+        if (this.value === 'ADMIN') {
+            adminCodeField.style.display = 'block';
+        } else {
+            adminCodeField.style.display = 'none';
+        }
+    });
+
     document.getElementById('registrationForm').addEventListener('submit', function(event) {
         event.preventDefault();
         document.querySelectorAll('.error').forEach(e => e.textContent = '');
@@ -14,7 +25,6 @@ function registrationHandler() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(object)
-
         })
             .then(async response => {
                 const data = await response.json();
@@ -36,4 +46,3 @@ function registrationHandler() {
 }
 
 document.addEventListener('DOMContentLoaded', registrationHandler);
-

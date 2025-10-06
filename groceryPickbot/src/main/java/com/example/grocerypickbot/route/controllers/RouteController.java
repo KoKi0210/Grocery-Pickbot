@@ -1,6 +1,5 @@
 package com.example.grocerypickbot.route.controllers;
 
-
 import com.example.grocerypickbot.route.models.RouteResponse;
 import com.example.grocerypickbot.route.services.RouteService;
 import com.example.grocerypickbot.route.services.RouteServiceImpl;

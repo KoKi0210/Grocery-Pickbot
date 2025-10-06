@@ -1,6 +1,7 @@
 package com.example.grocerypickbot.user.models;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 
 /**
  * Data Transfer Object for User information.
@@ -20,6 +21,9 @@ public record UserDto(
         String password,
 
         @NotBlank
-        String matchingPassword
+        String matchingPassword,
+
+        @NotEmpty
+        Role role
 ) {
 }

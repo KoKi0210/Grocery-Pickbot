@@ -3,6 +3,8 @@ package com.example.grocerypickbot.product.controllers;
 import com.example.grocerypickbot.product.models.ProductDto;
 import com.example.grocerypickbot.product.services.ProductService;
 import com.example.grocerypickbot.product.services.ProductServiceImpl;
+import com.example.grocerypickbot.security.annotation.RoleAccess;
+import com.example.grocerypickbot.user.models.Role;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "http://localhost:5500")
 @RequestMapping("/products")
 @Validated
+@RoleAccess(allowedRoles = {Role.ADMIN})
 public class ProductController {
 
   private final ProductService productService;
@@ -53,6 +56,12 @@ public class ProductController {
     return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
   }
 
+  /**
+   * Retrieves all products.
+   *
+   * @return ResponseEntity containing the list of products and HTTP status
+   */
+  @RoleAccess(allowedRoles = {Role.ADMIN, Role.USER})
   @GetMapping
   public ResponseEntity<List<ProductDto>> getAllProducts() {
     return ResponseEntity.ok(productService.findAllProducts());

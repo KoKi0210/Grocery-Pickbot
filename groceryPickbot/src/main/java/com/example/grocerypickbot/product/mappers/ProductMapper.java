@@ -4,13 +4,14 @@ import com.example.grocerypickbot.product.models.Product;
 import com.example.grocerypickbot.product.models.ProductDto;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 /**
  * Mapper interface for converting between Product and ProductDto objects.
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ProductMapper {
 
   /**

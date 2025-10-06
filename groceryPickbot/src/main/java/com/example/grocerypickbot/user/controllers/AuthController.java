@@ -3,6 +3,7 @@ package com.example.grocerypickbot.user.controllers;
 import com.example.grocerypickbot.exceptions.InvalidUserRegistrationException;
 import com.example.grocerypickbot.user.models.UserDto;
 import com.example.grocerypickbot.user.models.UserLoginRequest;
+import com.example.grocerypickbot.user.models.UserRegisterRequest;
 import com.example.grocerypickbot.user.services.UserService;
 import jakarta.validation.Valid;
 import java.util.Map;
@@ -49,13 +50,14 @@ public class AuthController {
   /**
    * Endpoint for user registration.
    *
-   * @param userDto the user data transfer object containing registration details
+   * @param userRegisterRequest the user data transfer object containing registration details
    * @return a ResponseEntity indicating success or failure of registration
    */
   @PostMapping("/registration")
-  public ResponseEntity<?> registerUserAccount(@Valid @RequestBody UserDto userDto) {
+  public ResponseEntity<?> registerUserAccount(@Valid @RequestBody
+                                                 UserRegisterRequest userRegisterRequest) {
     try {
-      userService.registerNewUserAccount(userDto);
+      userService.registerNewUserAccount(userRegisterRequest);
     } catch (InvalidUserRegistrationException iureEx) {
       return ResponseEntity.badRequest().body(iureEx.getErrors());
     }

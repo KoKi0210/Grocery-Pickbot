@@ -29,6 +29,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<Map<String, String>> handleValidationExceptions(
       MethodArgumentNotValidException ex) {
+    ex.printStackTrace();
     Map<String, String> errors = ex.getBindingResult().getFieldErrors().stream()
         .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
     return ResponseEntity.badRequest().body(errors);
@@ -42,7 +43,32 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
+    ex.printStackTrace();
     return ResponseEntity.badRequest().body(ex.getMessage());
+  }
+
+  /**
+   * Handles SecurityException and returns a 403 Forbidden.
+   *
+   * @param ex the SecurityException instance
+   * @return ResponseEntity with status 403 and the exception message
+   */
+  @ExceptionHandler(SecurityException.class)
+  public ResponseEntity<String> handleSecurityException(SecurityException ex) {
+    ex.printStackTrace();
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+  }
+
+  /**
+   * Handles UnauthorizedException and returns a 401 Unauthorized.
+   *
+   * @param ex the UnauthorizedException instance
+   * @return ResponseEntity with status 401 and the exception message
+   */
+  @ExceptionHandler(UnauthorizedException.class)
+  public ResponseEntity<String> handleUnauthorizedException(UnauthorizedException ex) {
+    ex.printStackTrace();
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
   }
 
   /**
@@ -53,6 +79,7 @@ public class GlobalExceptionHandler {
    */
   @ExceptionHandler(Exception.class)
   public ResponseEntity<String> handleGeneralExceptions(Exception ex) {
+    ex.printStackTrace();
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Възникна неочаквана грешка: " + ex.getMessage());
   }

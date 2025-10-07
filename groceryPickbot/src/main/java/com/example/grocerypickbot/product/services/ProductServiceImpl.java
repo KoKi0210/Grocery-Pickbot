@@ -50,9 +50,13 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public List<ProductDto> findAllProducts() {
-    return productRepository.findAll().stream()
+    List<ProductDto> products = productRepository.findAll().stream()
         .map(productMapper::toDto)
         .collect(Collectors.toList());
+    if (products.isEmpty()) {
+      throw new IllegalArgumentException("No products found");
+    }
+    return products;
   }
 
   @Override
@@ -63,11 +67,21 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public ProductDto updateProduct(Long id, @Valid ProductDto product) {
+  public ProductDto updateProduct(Long id, @Valid ProductDto productDto) {
     Product existingProduct = productRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-    productMapper.updateProductFromDto(product, existingProduct);
+    productRepository.findByLocation(productDto.location())
+        .filter(productAtLocation -> !productAtLocation.getId().equals(existingProduct.getId()))
+        .ifPresent(productAtLocation -> {
+          throw new IllegalArgumentException("Location is already occupied by another product");
+        });
+
+    if (productDto.location().getX() == 0 && productDto.location().getY() == 0) {
+      throw new IllegalArgumentException("Location can't be {0:0}");
+    }
+
+    productMapper.updateProductFromDto(productDto, existingProduct);
     Product updatedProduct = productRepository.save(existingProduct);
     return productMapper.toDto(updatedProduct);
   }

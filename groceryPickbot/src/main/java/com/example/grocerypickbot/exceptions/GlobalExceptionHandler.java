@@ -81,6 +81,6 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleGeneralExceptions(Exception ex) {
     ex.printStackTrace();
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Възникна неочаквана грешка: " + ex.getMessage());
+        .body("Unexpected error occurred: " + ex.getMessage());
   }
 }

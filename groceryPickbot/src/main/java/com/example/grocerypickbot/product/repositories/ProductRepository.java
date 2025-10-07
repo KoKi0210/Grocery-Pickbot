@@ -23,5 +23,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
    * @param location the location of the product
    * @return an Optional containing the product if found, or empty if not found
    */
-  Optional<Object> findByLocation(Location location);
+  Optional<Product> findByLocation(Location location);
 }

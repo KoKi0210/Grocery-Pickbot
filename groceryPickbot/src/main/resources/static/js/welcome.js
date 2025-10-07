@@ -54,16 +54,18 @@ function showCreateForm() {
             },
             body: JSON.stringify(product)
         })
-        .then(response => {
-            if (response.ok) return response.json();
-            return response.text().then(errorMsg => { throw new Error(errorMsg); });
-        })
-        .then(data => {
-            document.getElementById('create-result').innerHTML = `<p style="color:green;">Successfully created product!</p>`;
-        })
-        .catch(error => {
-            document.getElementById('create-result').innerHTML = `<p style="color:red;">${error.message}</p>`;
-        });
+            .then(response => {
+                if (response.ok) return response.json();
+                return response.text().then(errorMsg => {
+                    throw new Error(errorMsg);
+                });
+            })
+            .then(data => {
+                document.getElementById('create-result').innerHTML = `<p style="color:green;">Successfully created product!</p>`;
+            })
+            .catch(error => {
+                document.getElementById('create-result').innerHTML = `<p style="color:red;">${error.message}</p>`;
+            });
     });
 }
 
@@ -104,16 +106,20 @@ function showUpdateForm() {
             },
             body: JSON.stringify(updatedProduct)
         })
-        .then(response => {
-            if (response.ok) return response.json();
-            else throw new Error("Error updating the product.");
-        })
-        .then(data => {
-            document.getElementById('update-result').innerHTML = `<p style="color:green;">Successfully updated!</p>`;
-        })
-        .catch(error => {
-            document.getElementById('update-result').innerHTML = `<p style="color:red;">${error.message}</p>`;
-        });
+            .then(response => {
+                if (response.ok) return response.json();
+                else {
+                    return response.text().then(errorMsg => {
+                        throw new Error(errorMsg);
+                    });
+                }
+            })
+            .then(data => {
+                document.getElementById('update-result').innerHTML = `<p style="color:green;">Successfully updated!</p>`;
+            })
+            .catch(error => {
+                document.getElementById('update-result').innerHTML = `<p style="color:red;">${error.message}</p>`;
+            });
     });
 }
 
@@ -135,16 +141,18 @@ function showDeleteForm() {
         fetch(`/products/${id}`, {
             method: 'DELETE'
         })
-        .then(response => {
-            if (response.ok) {
-                document.getElementById('delete-result').innerHTML = `<p style="color:green;">Successfully deleted product with ID: ${id}</p>`;
-            } else {
-                throw new Error("Error deleting the product.");
-            }
-        })
-        .catch(error => {
-            document.getElementById('delete-result').innerHTML = `<p style="color:red;">${error.message}</p>`;
-        });
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('delete-result').innerHTML = `<p style="color:green;">Successfully deleted product with ID: ${id}</p>`;
+                } else {
+                    return response.text().then(errorMsg => {
+                        throw new Error(errorMsg);
+                    });
+                }
+            })
+            .catch(error => {
+                document.getElementById('delete-result').innerHTML = `<p style="color:red;">${error.message}</p>`;
+            });
     });
 }
 
@@ -182,16 +190,18 @@ function showProductList() {
             document.getElementById('content-area').innerHTML = html;
         })
         .catch(err => {
-            document.getElementById('content-area').innerHTML = `<p style="color:red;">Error loading products</p>`;
+            return response.text().then(errorMsg => {
+                throw new Error(errorMsg);
+            });
         });
 }
 
 function loadOrderSection() {
-  fetch('/products')
-    .then(res => res.json())
-    .then(products => {
-      const contentArea = document.getElementById('content-area');
-      contentArea.innerHTML = `
+    fetch('/products')
+        .then(res => res.json())
+        .then(products => {
+            const contentArea = document.getElementById('content-area');
+            contentArea.innerHTML = `
         <h2>Create order</h2>
         <div id="product-list"></div>
         <button onclick="submitOrder()">Finish order</button>
@@ -202,8 +212,8 @@ function loadOrderSection() {
         </div>
       `;
 
-      const listDiv = document.getElementById('product-list');
-      let html = `
+            const listDiv = document.getElementById('product-list');
+            let html = `
         <table border="1" cellpadding="5">
           <tr>
             <th>Name</th>
@@ -213,8 +223,8 @@ function loadOrderSection() {
           </tr>
       `;
 
-      products.forEach(p => {
-        html += `
+            products.forEach(p => {
+                html += `
           <tr>
             <td>${p.name}</td>
             <td>${p.price}</td>
@@ -222,64 +232,64 @@ function loadOrderSection() {
             <td><input type="number" min="0" id="order-qty-${p.id}" value="0"></td>
           </tr>
         `;
-      });
+            });
 
-      html += '</table>';
-      listDiv.innerHTML = html;
-    });
+            html += '</table>';
+            listDiv.innerHTML = html;
+        });
 }
 
 function submitOrder() {
-  fetch('/products')
-    .then(res => res.json())
-    .then(products => {
-      const orderItems = [];
+    fetch('/products')
+        .then(res => res.json())
+        .then(products => {
+            const orderItems = [];
 
-      products.forEach(p => {
-        const qty = parseInt(document.getElementById(`order-qty-${p.id}`).value);
-        if (qty > 0) {
-          orderItems.push({ productId: p.id, quantity: qty });
-        }
-      });
+            products.forEach(p => {
+                const qty = parseInt(document.getElementById(`order-qty-${p.id}`).value);
+                if (qty > 0) {
+                    orderItems.push({productId: p.id, quantity: qty});
+                }
+            });
 
-      if (orderItems.length === 0) {
-        alert('Choose at least one product.');
-        return;
-      }
+            if (orderItems.length === 0) {
+                alert('Choose at least one product.');
+                return;
+            }
 
-      fetch('/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: orderItems })
-      })
-      .then(res => res.json())
-      .then(data => {
-        const resultDiv = document.getElementById('order-result');
-          if (data.status === "SUCCESS") {
-            createdOrderId = data.orderId;
-            resultDiv.innerHTML = `
+            fetch('/orders', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({items: orderItems})
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('order-result');
+                    if (data.status === "SUCCESS") {
+                        createdOrderId = data.orderId;
+                        resultDiv.innerHTML = `
               ✅ ${data.message}<br>
               Order ID: ${data.orderId}
             `;
-            document.getElementById('track-section').style.display = 'block';
-          } else {
-             let missingText = '';
-                if (data.missingItems && data.missingItems.length > 0) {
-                  missingText = '<strong>Missing products::</strong><ul>';
-                  data.missingItems.forEach(item => {
-                    missingText += `<li>${item.productName} — requested: ${item.requested}, available: ${item.available}</li>`;
-                  });
-                  missingText += '</ul>';
-                }
+                        document.getElementById('track-section').style.display = 'block';
+                    } else {
+                        let missingText = '';
+                        if (data.missingItems && data.missingItems.length > 0) {
+                            missingText = '<strong>Missing products::</strong><ul>';
+                            data.missingItems.forEach(item => {
+                                missingText += `<li>${item.productName} — requested: ${item.requested}, available: ${item.available}</li>`;
+                            });
+                            missingText += '</ul>';
+                        }
 
-                resultDiv.innerHTML = `
+                        resultDiv.innerHTML = `
                   ❌ ${data.message}<br>
                   ${missingText}
                 `;
-                document.getElementById('track-section').style.display = 'none';
-        }
-      });
-    });
+                        document.getElementById('track-section').style.display = 'none';
+                    }
+                });
+        });
 }
 
 function trackBot() {

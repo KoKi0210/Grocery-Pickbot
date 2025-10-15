@@ -1,7 +1,7 @@
 package com.example.grocerypickbot.route.repositories;
 
 import com.example.grocerypickbot.route.models.Route;
-import java.util.Optional;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -15,5 +15,5 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
    * @param orderId the ID of the order
    * @return an Optional containing the Route if found, or empty if not found
    */
-  Optional<Route> findByOrderId(Long orderId);
+  List<Route> findByOrderId(Long orderId);
 }

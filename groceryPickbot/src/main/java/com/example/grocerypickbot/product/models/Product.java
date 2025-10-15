@@ -8,12 +8,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * Product entity representing a product in the store.
  */
 @Entity
 @Table(name = "products")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

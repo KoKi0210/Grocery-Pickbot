@@ -244,7 +244,6 @@ function submitOrder() {
         .then(res => res.json())
         .then(products => {
             const orderItems = [];
-
             products.forEach(p => {
                 const qty = parseInt(document.getElementById(`order-qty-${p.id}`).value);
                 if (qty > 0) {
@@ -269,9 +268,13 @@ function submitOrder() {
                         createdOrderId = data.orderId;
                         resultDiv.innerHTML = `
               ✅ ${data.message}<br>
-              Order ID: ${data.orderId}
+              Order ID: <input type="text" id="order-id-input" value="${data.orderId}" style="width:80px;" readonly>
+              <br>
+              <button onclick="collectOrder(false)">Single Bot Collect</button>
+              <button onclick="collectOrder(true)">Parallel Bots Collect</button>
+              <div id="bot-path" style="margin-top: 10px;"></div>
             `;
-                        document.getElementById('track-section').style.display = 'block';
+                        document.getElementById('track-section').style.display = 'none';
                     } else {
                         let missingText = '';
                         if (data.missingItems && data.missingItems.length > 0) {
@@ -292,22 +295,29 @@ function submitOrder() {
         });
 }
 
-function trackBot() {
-    if (!createdOrderId) return;
-
-    fetch(`/routes?orderId=${createdOrderId}`)
+function collectOrder(collectInParallel) {
+    const orderId = document.getElementById('order-id-input').value;
+    fetch(`/routes?orderId=${orderId}&collectInParallel=${collectInParallel}`)
         .then(res => res.json())
-        .then(data => {
+        .then(routes => {
             const pathDisplay = document.getElementById('bot-path');
-            if (data.visitedLocations && data.visitedLocations.length > 0) {
-                const locations = data.visitedLocations.map(loc => `(${loc[0]}, ${loc[1]})`).join(' ➡️ ');
-                pathDisplay.innerHTML = `<strong>Route:</strong><br>${locations}`;
+            if (Array.isArray(routes) && routes.length > 0) {
+                let html = `<strong>Routes:</strong><br>`;
+                routes.forEach((route, idx) => {
+                    const label = route.routeName ? route.routeName : `Route ${idx + 1}`;
+                    if (route.visitedLocations && route.visitedLocations.length > 0) {
+                        const locations = route.visitedLocations.map(loc => `(${loc[0]}, ${loc[1]})`).join(' ➡️ ');
+                        html += `<div style="margin-bottom:8px;"><b>Route for ${label}:</b> ${locations}</div>`;
+                    } else {
+                        html += `<div style="margin-bottom:8px;"><b>Route for ${label}:</b> ❌ No locations found.</div>`;
+                    }
+                });
+                pathDisplay.innerHTML = html;
             } else {
-                pathDisplay.innerHTML = "❌ Route not found.";
+                pathDisplay.innerHTML = "❌ No routes found.";
             }
         })
         .catch(err => {
-            document.getElementById('bot-path').innerHTML = "⚠️ Error loading the route.";
+            document.getElementById('bot-path').innerHTML = "⚠️ Error loading the routes.";
         });
 }
-

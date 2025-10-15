@@ -2,8 +2,10 @@ package com.example.grocerypickbot.product.mappers;
 
 import com.example.grocerypickbot.product.models.Product;
 import com.example.grocerypickbot.product.models.ProductDto;
+import com.example.grocerypickbot.route.services.RouteServiceImpl.ProductInfo;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -39,4 +41,16 @@ public interface ProductMapper {
    */
   @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   void updateProductFromDto(ProductDto productDto, @MappingTarget Product product);
+
+  /**
+   * Converts a Product entity to a ProductInfo record.
+   *
+   * @param product the Product entity to convert
+   * @return the corresponding ProductInfo record
+   */
+  @Mapping(target = "name", source = "name")
+  @Mapping(target = "location", expression =
+      "java(new RouteServiceImpl.Location(product.getLocation().getX(),"
+          + " product.getLocation().getY()))")
+  ProductInfo toProductInfo(Product product);
 }

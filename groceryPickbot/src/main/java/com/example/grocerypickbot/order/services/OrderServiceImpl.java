@@ -14,7 +14,6 @@ import com.example.grocerypickbot.order.models.OrderStatus;
 import com.example.grocerypickbot.order.repositories.OrderRepository;
 import com.example.grocerypickbot.product.models.Product;
 import com.example.grocerypickbot.product.repositories.ProductRepository;
-import com.example.grocerypickbot.route.services.RouteServiceImpl;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +28,6 @@ public class OrderServiceImpl implements OrderService {
 
   private final OrderRepository orderRepository;
   private final ProductRepository productRepository;
-  private final RouteServiceImpl routeService;
   private final OrderMapper orderMapper;
 
   /**
@@ -37,16 +35,13 @@ public class OrderServiceImpl implements OrderService {
    *
    * @param orderRepository   the repository for managing orders
    * @param productRepository the repository for managing products
-   * @param routeService      the service for calculating routes
    * @param orderMapper       the mapper for converting between Order entities and DTOs
    */
   public OrderServiceImpl(OrderRepository orderRepository,
                           ProductRepository productRepository,
-                          RouteServiceImpl routeService,
                           OrderMapper orderMapper) {
     this.orderRepository = orderRepository;
     this.productRepository = productRepository;
-    this.routeService = routeService;
     this.orderMapper = orderMapper;
   }
 
@@ -62,7 +57,6 @@ public class OrderServiceImpl implements OrderService {
     Order order = createOrderEntity(orderRequestDto);
     Order savedOrder = orderRepository.save(order);
 
-    routeService.calculateAndSavePath(savedOrder);
     updateProductStock(orderRequestDto.items());
 
     return OrderResponseDto.success(savedOrder.getId(),

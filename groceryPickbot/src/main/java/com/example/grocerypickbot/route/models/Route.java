@@ -28,6 +28,9 @@ public class Route {
   @Column(name = "route_coordinates", columnDefinition = "TEXT")
   private String coordinatesJson;
 
+  @Column(name = "route_name")
+  private String routeName;
+
   public Long getId() {
     return id;
   }
@@ -50,5 +53,13 @@ public class Route {
 
   public void setCoordinatesJson(String coordinatesJson) {
     this.coordinatesJson = coordinatesJson;
+  }
+
+  public String getRouteName() {
+    return routeName;
+  }
+
+  public void setRouteName(String routeName) {
+    this.routeName = routeName;
   }
 }

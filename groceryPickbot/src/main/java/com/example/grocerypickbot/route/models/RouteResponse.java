@@ -13,6 +13,7 @@ import java.util.List;
 public record RouteResponse(
     Long orderId,
     OrderStatus status,
-    List<int[]> visitedLocations
+    List<int[]> visitedLocations,
+    String routeName
 ) {
 }

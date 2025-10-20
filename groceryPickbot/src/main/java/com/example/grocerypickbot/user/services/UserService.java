@@ -133,7 +133,9 @@ public class UserService {
         throw new UsernameNotFoundException(loginRequest.getUsername());
       }
 
-      String jwtToken = jwtUtils.generateToken(authentication.getName(), userDb.getUsername());
+      String
+          jwtToken =
+          jwtUtils.generateToken(authentication.getName(), userDb.getRole().toString());
       ResponseCookie cookie = jwtCookieUtil.generateJwtCookie(jwtToken);
 
       return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())

@@ -1,5 +1,6 @@
 stages:          # List of stages for jobs, and their order of execution
   - quality_check
+  - test
 
 run_checkstyle:
   stage: quality_check
@@ -9,3 +10,12 @@ run_checkstyle:
     - cd groceryPickbot
     - echo "Running Checkstyle analysis..."
     - mvn checkstyle:check
+
+run_tests:
+  stage: test
+  image: maven:3.8-openjdk-17
+  script:
+    - echo "Navigating to project directory..."
+    - cd groceryPickbot
+    - echo "Running unit tests..."
+    - mvn test

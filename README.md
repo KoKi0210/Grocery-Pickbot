@@ -42,6 +42,10 @@ A web application for managing grocery products, creating orders, and visualizin
 4. Run the Spring Boot application (`GroceryApplication.java`)
 5. Open `(http://localhost:8080/index.html)` in a browser
 
+### Node and NPM installation
+You need to have Node.js and npm installed on your machine to run the frontend part of the application.
+You can download and install them from [Node.js official website](https://nodejs.org/en/download).
+
 Name: Kostadin Harizanov
 GitHub: github.com/KoKi0210
 

@@ -4,7 +4,9 @@ stages:          # List of stages for jobs, and their order of execution
 
 run_checkstyle:
   stage: quality_check
-  image: maven:3.8-openjdk-17
+  image: mirror-hub.docker.nexus.ocado.tech/maven:3.8-openjdk-17
+  before_script:
+    - . "${ALDI_SETUP}"
   script:
     - echo "Navigating to project directory..."
     - cd groceryPickbot
@@ -13,7 +15,9 @@ run_checkstyle:
 
 run_tests:
   stage: test
-  image: maven:3.8-openjdk-17
+  image: mirror-hub.docker.nexus.ocado.tech/maven:3.8-openjdk-17
+  before_script:
+    - . "${ALDI_SETUP}"
   script:
     - echo "Navigating to project directory..."
     - cd groceryPickbot

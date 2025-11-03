@@ -11,7 +11,8 @@ export default defineConfig({
     proxy: {
       '/products': 'http://localhost:8080',
       '/orders': 'http://localhost:8080',
-      '/routes': 'http://localhost:8080'
+      '/routes': 'http://localhost:8080',
+        '/api': 'http://localhost:8080'
     }
   }
 });

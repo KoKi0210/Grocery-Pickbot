@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import com.example.grocerypickbot.exceptions.InvalidProductDataException;
 import com.example.grocerypickbot.product.mappers.ProductMapper;
 import com.example.grocerypickbot.product.models.Location;
 import com.example.grocerypickbot.product.models.Product;
@@ -65,7 +66,7 @@ class ProductServiceImplTest {
         location);
     when(productRepository.existsByName(productDto.name())).thenReturn(true);
 
-    assertThrows(IllegalArgumentException.class, () -> productService.createProduct(productDto));
+    assertThrows(InvalidProductDataException.class, () -> productService.createProduct(productDto));
   }
 
   @Test
@@ -78,7 +79,7 @@ class ProductServiceImplTest {
     when(productRepository.existsByName(productDto.name())).thenReturn(false);
     when(productRepository.findByLocation(productDto.location())).thenReturn(Optional.of(new Product()));
 
-    assertThrows(IllegalArgumentException.class, () -> productService.createProduct(productDto));
+    assertThrows(InvalidProductDataException.class, () -> productService.createProduct(productDto));
   }
 
   @Test
@@ -91,7 +92,7 @@ class ProductServiceImplTest {
     when(productRepository.existsByName(productDto.name())).thenReturn(false);
     when(productRepository.findByLocation(productDto.location())).thenReturn(Optional.empty());
 
-    assertThrows(IllegalArgumentException.class, () -> productService.createProduct(productDto));
+    assertThrows(InvalidProductDataException.class, () -> productService.createProduct(productDto));
   }
 
   @Test
@@ -119,7 +120,7 @@ class ProductServiceImplTest {
     ProductDto productDto = new ProductDto(1L,"UpdatedProduct", BigDecimal.valueOf(1),1,location);
     when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
-    assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(productId, productDto));
+    assertThrows(InvalidProductDataException.class, () -> productService.updateProduct(productId, productDto));
   }
 
   @Test
@@ -140,7 +141,7 @@ class ProductServiceImplTest {
     when(productRepository.findById(1L)).thenReturn(Optional.of(existingProduct));
     when(productRepository.findByLocation(productDto.location())).thenReturn(Optional.of(anotherProduct));
 
-    assertThrows(IllegalArgumentException.class, () -> productService.updateProduct(1L, productDto));
+    assertThrows(InvalidProductDataException.class, () -> productService.updateProduct(1L, productDto));
   }
 
   @Test

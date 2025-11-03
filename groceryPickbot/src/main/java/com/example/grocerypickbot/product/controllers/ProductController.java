@@ -1,5 +1,6 @@
 package com.example.grocerypickbot.product.controllers;
 
+import com.example.grocerypickbot.exceptions.InvalidProductDataException;
 import com.example.grocerypickbot.product.models.ProductDto;
 import com.example.grocerypickbot.product.services.ProductService;
 import com.example.grocerypickbot.product.services.ProductServiceImpl;
@@ -10,7 +11,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
  * </p>
  */
 @RestController
-@CrossOrigin(origins = "http://localhost:5500")
 @RequestMapping("/products")
 @Validated
 @RoleAccess(allowedRoles = {Role.ADMIN})
@@ -52,8 +51,14 @@ public class ProductController {
    * @return ResponseEntity containing the created product and HTTP status
    */
   @PostMapping
-  public ResponseEntity<ProductDto> createProduct(@Valid @RequestBody ProductDto productDto) {
-    return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
+  public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDto productDto) {
+    ProductDto productDtoCreated;
+    try {
+      productDtoCreated = productService.createProduct(productDto);
+    } catch (InvalidProductDataException e) {
+      return ResponseEntity.badRequest().body(e.getErrors());
+    }
+    return new ResponseEntity<>(productDtoCreated, HttpStatus.CREATED);
   }
 
   /**
@@ -86,9 +91,14 @@ public class ProductController {
    * @return ResponseEntity containing the updated product and HTTP status
    */
   @PutMapping("/{id}")
-  public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id,
-                                                  @Valid @RequestBody ProductDto productDto) {
-    return ResponseEntity.ok(productService.updateProduct(id, productDto));
+  public ResponseEntity<?> updateProduct(@PathVariable Long id,
+                                         @Valid @RequestBody ProductDto productDto) {
+    try {
+      ProductDto updatedProduct = productService.updateProduct(id, productDto);
+      return ResponseEntity.ok(updatedProduct);
+    } catch (InvalidProductDataException e) {
+      return ResponseEntity.badRequest().body(e.getErrors());
+    }
   }
 
   /**

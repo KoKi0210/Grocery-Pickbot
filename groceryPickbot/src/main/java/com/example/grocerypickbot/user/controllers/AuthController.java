@@ -1,7 +1,6 @@
 package com.example.grocerypickbot.user.controllers;
 
 import com.example.grocerypickbot.exceptions.InvalidUserRegistrationException;
-import com.example.grocerypickbot.user.models.UserDto;
 import com.example.grocerypickbot.user.models.UserLoginRequest;
 import com.example.grocerypickbot.user.models.UserRegisterRequest;
 import com.example.grocerypickbot.user.services.UserService;

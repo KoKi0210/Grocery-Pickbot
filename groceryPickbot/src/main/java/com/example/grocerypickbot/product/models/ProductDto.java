@@ -3,7 +3,7 @@ package com.example.grocerypickbot.product.models;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 public record ProductDto(
     Long id,
 
-    @NotBlank(message = "Product name is required")
+    @NotEmpty(message = "Product name is required")
     @Size(min = 3, max = 100, message = "The name must be between 2 and 100 characters")
     String name,
 

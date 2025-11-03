@@ -1,12 +1,17 @@
 package com.example.grocerypickbot.product.services;
 
+import com.example.grocerypickbot.exceptions.InvalidProductDataException;
 import com.example.grocerypickbot.product.mappers.ProductMapper;
 import com.example.grocerypickbot.product.models.Product;
 import com.example.grocerypickbot.product.models.ProductDto;
 import com.example.grocerypickbot.product.repositories.ProductRepository;
 import jakarta.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,7 +27,7 @@ public class ProductServiceImpl implements ProductService {
    * Constructs a ProductServiceImpl with the specified ProductRepository and ProductMapper.
    *
    * @param productRepository the repository for managing products
-   * @param productMapper the mapper for converting between Product and ProductDto
+   * @param productMapper     the mapper for converting between Product and ProductDto
    */
   public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper) {
     this.productRepository = productRepository;
@@ -31,16 +36,22 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductDto createProduct(@Valid ProductDto productDto) {
+    Map<String, String> errors = new HashMap<>();
+
     if (productRepository.existsByName(productDto.name())) {
-      throw new IllegalArgumentException("Product with this name already exists");
+      errors.put("name", "Product with this name already exists");
     }
 
     if (productRepository.findByLocation(productDto.location()).isPresent()) {
-      throw new IllegalArgumentException("Location is already occupied by another product");
+      errors.put("locationOccupied", "Location is already occupied by another product");
     }
 
     if (productDto.location().getX() == 0 && productDto.location().getY() == 0) {
-      throw new IllegalArgumentException("Location can't be {0:0}");
+      errors.put("location", "Location can't be {0:0}");
+    }
+
+    if (!errors.isEmpty()) {
+      throw new InvalidProductDataException(errors);
     }
 
     Product product = productMapper.toEntity(productDto);
@@ -68,21 +79,31 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductDto updateProduct(Long id, @Valid ProductDto productDto) {
-    Product existingProduct = productRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+    Map<String, String> errors = new HashMap<>();
 
-    productRepository.findByLocation(productDto.location())
-        .filter(productAtLocation -> !productAtLocation.getId().equals(existingProduct.getId()))
-        .ifPresent(productAtLocation -> {
-          throw new IllegalArgumentException("Location is already occupied by another product");
-        });
-
-    if (productDto.location().getX() == 0 && productDto.location().getY() == 0) {
-      throw new IllegalArgumentException("Location can't be {0:0}");
+    Optional<Product> existingProduct = productRepository.findById(id);
+    if (existingProduct.isEmpty()) {
+      errors.put("notFound", "Product not found");
+      throw new InvalidProductDataException(errors);
     }
 
-    productMapper.updateProductFromDto(productDto, existingProduct);
-    Product updatedProduct = productRepository.save(existingProduct);
+    Product product = existingProduct.get();
+
+    productRepository.findByLocation(productDto.location())
+        .filter(productAtLocation -> !productAtLocation.getId().equals(product.getId()))
+        .ifPresent(productAtLocation -> errors.put("locationOccupied",
+            "Location is already occupied by another product"));
+
+    if (productDto.location().getX() == 0 && productDto.location().getY() == 0) {
+      errors.put("location", "Location can't be {0:0}");
+    }
+
+    if (!errors.isEmpty()) {
+      throw new InvalidProductDataException(errors);
+    }
+
+    productMapper.updateProductFromDto(productDto, product);
+    Product updatedProduct = productRepository.save(product);
     return productMapper.toDto(updatedProduct);
   }
 
@@ -91,7 +112,10 @@ public class ProductServiceImpl implements ProductService {
     if (!productRepository.existsById(id)) {
       throw new IllegalArgumentException("Product not found");
     }
-    productRepository.deleteById(id);
+    try {
+      productRepository.deleteById(id);
+    } catch (DataIntegrityViolationException e) {
+      throw new RuntimeException("Cannot delete product. It is part of an existing order.");
+    }
   }
-
 }

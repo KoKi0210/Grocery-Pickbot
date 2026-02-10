@@ -5,6 +5,9 @@ import com.example.grocerypickbot.security.annotation.RoleAccess;
 import com.example.grocerypickbot.user.models.Role;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -25,11 +28,13 @@ public class RoleAccessAspect {
    * executing methods or classes annotated with @RoleAccess.
    *
    * @param joinPoint the join point representing the method execution
-   * @throws SecurityException if the user does not have the required role
+   * @throws UnauthorizedException if the user does not have the required role
    */
   @Before("@annotation(com.example.grocerypickbot.security.annotation.RoleAccess)"
       + " || @within(com.example.grocerypickbot.security.annotation.RoleAccess)")
-  public void checkRole(JoinPoint joinPoint) {
+  public void checkRole(JoinPoint joinPoint)throws UnauthorizedException {
+    Map<String, String> errors = new HashMap<>();
+
     RoleAccess roleAccess = getRoleAccessAnnotation(joinPoint);
     if (roleAccess == null) {
       return;
@@ -38,14 +43,21 @@ public class RoleAccessAspect {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null || !authentication.isAuthenticated()) {
-      throw new UnauthorizedException("User is not authenticated");
+      errors.put("authentication", "User is not authenticated");
+    }
+    if (!errors.isEmpty()) {
+      throw new UnauthorizedException(errors);
     }
     // Get user's authorities (roles)
     boolean hasRole = authentication.getAuthorities().stream()
         .anyMatch(auth -> Arrays.stream(allowedRoles)
             .anyMatch(role -> auth.getAuthority().equals("ROLE_" + role)));
     if (!hasRole) {
-      throw new SecurityException("User does not have required role");
+      errors.put("authentication", "User does not have required role");
+    }
+
+    if (!errors.isEmpty()) {
+      throw new UnauthorizedException(errors);
     }
   }
 

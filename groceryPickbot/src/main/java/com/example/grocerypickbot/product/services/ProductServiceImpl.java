@@ -81,6 +81,11 @@ public class ProductServiceImpl implements ProductService {
   public ProductDto updateProduct(Long id, @Valid ProductDto productDto) {
     Map<String, String> errors = new HashMap<>();
 
+    if (id == (null) || id <= 0) {
+      errors.put("invalid", "Invalid product ID");
+      throw new InvalidProductDataException(errors);
+    }
+
     Optional<Product> existingProduct = productRepository.findById(id);
     if (existingProduct.isEmpty()) {
       errors.put("notFound", "Product not found");
@@ -108,14 +113,22 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public void deleteProduct(Long id) {
+  public void deleteProduct(Long id) throws InvalidProductDataException {
+    Map<String, String> errors = new HashMap<>();
+
+    if (id == (null) || id <= 0) {
+      errors.put("invalid", "Invalid product ID");
+      throw new InvalidProductDataException(errors);
+    }
     if (!productRepository.existsById(id)) {
-      throw new IllegalArgumentException("Product not found");
+      errors.put("invalid", "Product not found");
+      throw new InvalidProductDataException(errors);
     }
     try {
       productRepository.deleteById(id);
     } catch (DataIntegrityViolationException e) {
-      throw new RuntimeException("Cannot delete product. It is part of an existing order.");
+      errors.put("invalid", "Cannot delete product. It is part of an existing order.");
+      throw new InvalidProductDataException(errors);
     }
   }
 }

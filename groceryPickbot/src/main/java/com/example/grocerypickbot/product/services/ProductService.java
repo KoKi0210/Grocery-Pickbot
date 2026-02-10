@@ -1,5 +1,6 @@
 package com.example.grocerypickbot.product.services;
 
+import com.example.grocerypickbot.exceptions.InvalidProductDataException;
 import com.example.grocerypickbot.product.models.ProductDto;
 import java.util.List;
 
@@ -45,6 +46,6 @@ public interface ProductService {
    *
    * @param id the ID of the product to delete
    */
-  void deleteProduct(Long id);
+  void deleteProduct(Long id) throws InvalidProductDataException;
 
 }

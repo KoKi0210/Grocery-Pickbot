@@ -10,10 +10,12 @@ import com.example.grocerypickbot.user.models.UserLoginRequest;
 import com.example.grocerypickbot.user.models.UserRegisterRequest;
 import com.example.grocerypickbot.user.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;

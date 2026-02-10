@@ -66,9 +66,13 @@ public class GlobalExceptionHandler {
    * @return ResponseEntity with status 401 and the exception message
    */
   @ExceptionHandler(UnauthorizedException.class)
-  public ResponseEntity<String> handleUnauthorizedException(UnauthorizedException ex) {
+  public ResponseEntity<Map<String, String>> handleUnauthorizedException(UnauthorizedException ex) {
     ex.printStackTrace();
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+    Map<String, String> errors = ex.getErrors();
+    if (errors == null || errors.isEmpty()) {
+      errors = Map.of("general", ex.getMessage());
+    }
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errors);
   }
 
   /**

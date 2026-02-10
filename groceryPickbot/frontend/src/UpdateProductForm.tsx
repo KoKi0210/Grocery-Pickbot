@@ -39,12 +39,7 @@ export default function UpdateProductForm(): JSX.Element {
     const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const idToUpdateNum = parseInt(idToUpdate);
-        if (isNaN(idToUpdateNum)) {
-            return;
-        }
-
-        const success = await updateProduct(idToUpdateNum, updatedProduct);
+        const success = await updateProduct(parseInt(idToUpdate), updatedProduct);
         if (success) {
             setUpdatedProduct(initialProduct);
             setIdToUpdate('');
@@ -55,12 +50,19 @@ export default function UpdateProductForm(): JSX.Element {
         <div className="form-container">
             <h2>Update product</h2>
             <form id="update-product-form" onSubmit={handleUpdate}>
-
+                <ErrorMessage message={formMessage.general} />
                 <ErrorMessage message={formMessage.notFound} />
-                <ReactInputField label="id" type="text" id="id"
-                                 value={idToUpdate} onChange={e => setIdToUpdate(e.target.value)} />
+                <ErrorMessage message={formMessage.invalid} />
 
-                <hr style={{margin: '20px 0'}} />
+                <ReactInputField
+                    label="id"
+                    type="text"
+                    id="id"
+                    value={idToUpdate}
+                    onChange={e => setIdToUpdate(e.target.value)}
+                />
+
+                <hr style={{ margin: '20px 0' }} />
 
                 <ErrorMessage message={formMessage.name}/>
                 <ReactInputField label="Name" type="text" id="name"
@@ -82,6 +84,7 @@ export default function UpdateProductForm(): JSX.Element {
                 <ReactInputField label="Location Y" type="number" id="y"
                     value={updatedProduct.location.y} onChange={e => handleLocationChange('y', e.target.value)} />
 
+                <ErrorMessage message={formMessage.authentication}/>
                 <ReactButton type="submit" disabled={isLoading} >
                     {isLoading ? 'Updating...' : 'Update Product'}
                 </ReactButton>

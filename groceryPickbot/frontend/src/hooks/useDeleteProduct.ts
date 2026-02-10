@@ -2,13 +2,13 @@ import { useState } from "react";
 
 export function useDeleteProduct()  {
 
-    const [formMessage, setFormMessage] = useState<string | null>(null);
+    const [formMessage, setFormMessage] = useState<Record<string, string>>({});
     const [isError, setIsError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const deleteProduct = async (id: string): Promise<boolean> => {
         setIsLoading(true);
-        setFormMessage(null);
+        setFormMessage({});
         setIsError(false);
 
         try {
@@ -17,11 +17,11 @@ export function useDeleteProduct()  {
             });
 
             if (response.ok) {
-                setFormMessage(`Successfully deleted product with ID: ${id}`);
+                setFormMessage({'success':`Successfully deleted product with ID: ${id}`});
                 setIsError(false);
                 return true;
             } else {
-                const errorMsg = await response.text();
+                const errorMsg = await response.json();
                 setFormMessage(errorMsg)
                 setIsError(true)
                 return false;

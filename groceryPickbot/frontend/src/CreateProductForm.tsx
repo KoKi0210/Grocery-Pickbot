@@ -48,6 +48,8 @@ export default function CreateProductForm(): JSX.Element {
             <h2>Create product</h2>
             <form id="create-product-form" onSubmit={handleCreate}>
 
+                <ErrorMessage message={formMessage.general}/>
+
                 <ErrorMessage message={formMessage.name}/>
                 <ReactInputField label="Name" type="text" id="name"
                     value={product.name} onChange={e => handleFieldChange('name', e.target.value)} />
@@ -68,6 +70,8 @@ export default function CreateProductForm(): JSX.Element {
                 <ReactInputField label="Location Y" type="number" id="y"
                     value={product.location.y} onChange={e => handleLocationChange('y', e.target.value)} />
                 <br />
+
+                <ErrorMessage message={formMessage.authentication}/>
                 <ReactButton type="submit" disabled={isLoading}>
                     {isLoading ? 'Creating...' : 'CREATE'}
                 </ReactButton>

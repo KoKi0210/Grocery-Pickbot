@@ -1,7 +1,8 @@
-import {JSX, useState} from "react";
+import React, {JSX, useState} from "react";
 import ReactButton from "./Button";
 import ReactInputField from "./InputField";
 import { useDeleteProduct } from "./hooks/useDeleteProduct";
+import ErrorMessage from "./ErrorMessage";
 
 export default function DeleteProductForm(): JSX.Element {
 
@@ -11,7 +12,6 @@ export default function DeleteProductForm(): JSX.Element {
 
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault();
-
         const success = await deleteProduct(idToDelete);
         if (success) {
             setIdToDelete('');
@@ -23,6 +23,7 @@ export default function DeleteProductForm(): JSX.Element {
             <h2>Delete product</h2>
             <form id="delete-product-form" onSubmit={handleDelete}>
 
+                <ErrorMessage message={formMessage.invalid} />
                 <ReactInputField
                     label="Product ID to Delete"
                     type="text"
@@ -32,6 +33,7 @@ export default function DeleteProductForm(): JSX.Element {
                 />
 
                 <br />
+                <ErrorMessage message={formMessage.authentication}/>
                 <ReactButton type="submit" disabled={isLoading}>
                     {isLoading ? 'Deleting...' : 'DELETE'}
                 </ReactButton>
@@ -40,7 +42,7 @@ export default function DeleteProductForm(): JSX.Element {
             <div id="delete-result">
                 {formMessage && (
                     <p style={{ color: isError ? 'red' : 'green' }}>
-                        {formMessage}
+                        {formMessage.success || formMessage.general || formMessage.error}
                     </p>
                 )}
             </div>

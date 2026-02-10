@@ -1,6 +1,7 @@
 package com.example.grocerypickbot.product.controllers;
 
 import com.example.grocerypickbot.exceptions.InvalidProductDataException;
+import com.example.grocerypickbot.exceptions.UnauthorizedException;
 import com.example.grocerypickbot.product.models.ProductDto;
 import com.example.grocerypickbot.product.services.ProductService;
 import com.example.grocerypickbot.product.services.ProductServiceImpl;
@@ -8,6 +9,8 @@ import com.example.grocerypickbot.security.annotation.RoleAccess;
 import com.example.grocerypickbot.user.models.Role;
 import jakarta.validation.Valid;
 import java.util.List;
+
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -56,6 +59,8 @@ public class ProductController {
     try {
       productDtoCreated = productService.createProduct(productDto);
     } catch (InvalidProductDataException e) {
+      return ResponseEntity.badRequest().body(e.getErrors());
+    } catch (UnauthorizedException e) {
       return ResponseEntity.badRequest().body(e.getErrors());
     }
     return new ResponseEntity<>(productDtoCreated, HttpStatus.CREATED);
@@ -108,8 +113,12 @@ public class ProductController {
    * @return ResponseEntity with HTTP status
    */
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-    productService.deleteProduct(id);
-    return ResponseEntity.noContent().build();
+  public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+    try{
+      productService.deleteProduct(id);
+      return ResponseEntity.noContent().build();
+    }catch (InvalidProductDataException e) {
+      return ResponseEntity.badRequest().body(e.getErrors());
+    }
   }
 }

@@ -149,6 +149,6 @@ class ProductServiceImplTest {
     Long productId = 1L;
     when(productRepository.existsById(productId)).thenReturn(false);
 
-    assertThrows(IllegalArgumentException.class, () -> productService.deleteProduct(productId));
+    assertThrows(InvalidProductDataException.class, () -> productService.deleteProduct(productId));
   }
 }

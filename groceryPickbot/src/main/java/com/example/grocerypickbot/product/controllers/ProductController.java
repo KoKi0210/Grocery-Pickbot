@@ -8,9 +8,8 @@ import com.example.grocerypickbot.product.services.ProductServiceImpl;
 import com.example.grocerypickbot.security.annotation.RoleAccess;
 import com.example.grocerypickbot.user.models.Role;
 import jakarta.validation.Valid;
-import java.util.List;
-
 import jakarta.validation.constraints.NotBlank;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -114,10 +113,10 @@ public class ProductController {
    */
   @DeleteMapping("/{id}")
   public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
-    try{
+    try {
       productService.deleteProduct(id);
       return ResponseEntity.noContent().build();
-    }catch (InvalidProductDataException e) {
+    } catch (InvalidProductDataException e) {
       return ResponseEntity.badRequest().body(e.getErrors());
     }
   }

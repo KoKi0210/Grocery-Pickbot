@@ -7,6 +7,7 @@ import java.util.Map;
  */
 public class UnauthorizedException extends RuntimeException {
   private final Map<String, String> errors;
+
   /**
    * Constructs a new UnauthorizedException with a map of error messages.
    *
@@ -19,5 +20,6 @@ public class UnauthorizedException extends RuntimeException {
 
   public Map<String, String> getErrors() {
     return errors;
-  }}
+  }
+}
 
